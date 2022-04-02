@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import List from "./views/List/List";
 import Detail from "./views/Detail/Detail";
 import {LinkContainer} from "react-router-bootstrap";
+import NewAdvert from "./views/NewAdvert/NewAdvert";
 
 function App() {
     return (
@@ -18,8 +19,8 @@ function App() {
                             <LinkContainer to={"/"}>
                                 <Nav.Link>List</Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to={"/advert"}>
-                                <Nav.Link>Advert</Nav.Link>
+                            <LinkContainer to={"/new-advert"}>
+                                <Nav.Link>New Advert</Nav.Link>
                             </LinkContainer>
                         </Nav>
                     </Navbar.Collapse>
@@ -28,7 +29,10 @@ function App() {
             <Container>
                 <Routes>
                     <Route path="/" element={<List/>}/>
-                    <Route path="/advert" element={<Detail/>}/>
+                    <Route path="/new-advert" element={<NewAdvert/>}/>
+                    <Route path="/advert">
+                        <Route path=":id" element={<Detail/>}/>
+                    </Route>
                 </Routes>
             </Container>
         </BrowserRouter>
