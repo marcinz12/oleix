@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import * as yup from 'yup';
 import {Formik} from 'formik';
-import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
+import {Button, Col, Form, InputGroup, ListGroup, Row} from "react-bootstrap";
+import axios from "axios";
+import {LinkContainer} from "react-router-bootstrap";
 
 const schema = yup.object().shape({
     title: yup.string().required().max(50).min(3, 'tekst jako opis'),
@@ -28,6 +30,14 @@ const initialValues={
 }
 
 const NewAdvert = () => {
+    const [categories, setCategories] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get('/categories');
+            setCategories(response.data);
+        }
+        fetchData();
+    }, []);
     return (
         <div>
             <Formik
@@ -112,6 +122,21 @@ const NewAdvert = () => {
                                     {errors.description}
                                 </Form.Control.Feedback>
                             </Form.Group>
+
+                            <Form.Group as={Col} md="4" controlId="validationSeller">
+                                <Form.Label>description</Form.Label>
+                                <Form.Select aria-label="Default select example">
+                                    <option/>
+
+                                    {categories.map(category => (
+                                        <option key={category.id} value={category.id}>{category.title}</option>
+                                    ))}
+
+                                </Form.Select>
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.description}
+                                </Form.Control.Feedback>
+                            </Form.Group>
                         </Row>
                         <Form.Group className="mb-3">
                             <Form.Check
@@ -126,6 +151,7 @@ const NewAdvert = () => {
                             />
                         </Form.Group>
                         <Button type="submit">Submit form</Button>
+
                     </Form>
                 )}
             </Formik>
