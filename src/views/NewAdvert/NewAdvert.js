@@ -1,10 +1,9 @@
-
 import React, {useEffect, useState} from 'react';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {Button, Col, Form, InputGroup, ListGroup, Row} from "react-bootstrap";
 import axios from "axios";
-import {LinkContainer} from "react-router-bootstrap";
+import {useNavigate} from 'react-router-dom';
 
 const schema = yup.object().shape({
     title: yup.string().required().max(50).min(3, 'tekst jako opis'),
@@ -12,24 +11,25 @@ const schema = yup.object().shape({
     seller: yup.string().required().email('Podaj poprawny adres'),
     sellerPhone: yup.string(),
     canNegotiate: yup.bool(), //.required().oneOf([true], 'canNegotiate must be accepted'),
-
+    categoryId: yup.string(),
     description: yup.string().required(),
-    zip: yup.string().required(),
+
 });
 
-const initialValues={
+const initialValues = {
     title: 'test',
     price: 'Otto',
     seller: '',
     sellerPhone: '',
     canNegotiate: false,
-
+    categoryId: '',
     description: '',
-    zip: '',
+
 
 }
 
 const NewAdvert = () => {
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
@@ -38,11 +38,21 @@ const NewAdvert = () => {
         }
         fetchData();
     }, []);
+    const handleSubmitFormik = async (values) => {
+        const request = {
+            ...values,
+            createdOn: new Date().toISOString(),
+            image: "http://placeimg.com/400/400/business?i=0"
+        }
+        const response = await axios.post('/adverts', request);
+        navigate(`/advert/${response.data.id}`)
+    }
     return (
         <div>
             <Formik
                 validationSchema={schema}
-                onSubmit={console.log}
+                //                onSubmit={console.log}
+                onSubmit={handleSubmitFormik}
                 initialValues={initialValues}
             >
                 {({
@@ -124,8 +134,13 @@ const NewAdvert = () => {
                             </Form.Group>
 
                             <Form.Group as={Col} md="4" controlId="validationSeller">
-                                <Form.Label>description</Form.Label>
-                                <Form.Select aria-label="Default select example">
+                                <Form.Label>categoryId</Form.Label>
+                                <Form.Select
+                                    value={values.categoryId}
+                                    onChange={handleChange}
+                                    name={"categoryId"}
+                                    isInvalid={!!errors.categoryId}
+                                    aria-label="Default select example">
                                     <option/>
 
                                     {categories.map(category => (
@@ -134,7 +149,7 @@ const NewAdvert = () => {
 
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.description}
+                                    {errors.categoryId}
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
