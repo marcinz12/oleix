@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import axios from "axios";
-import {Badge, Card, Col, Container, Image, Row, Stack} from "react-bootstrap";
+import {Badge, Button, Card, Col, Container, Image, Row, Stack} from "react-bootstrap";
 
 const Detail = () => {
     const params = useParams();
